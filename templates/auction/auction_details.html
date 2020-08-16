@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% load accounts_tags %}
+
+{% block title %}
+    {{title}}
+{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <img class="card-img-top" src="{{product.image.url}}">
+                <div class="card-body">
+                    <h4 class="card-title">{{product.title}}</h4>
+                    <p class="card-text lead font-weight-bold text-dark">
+                        Owner : {{product.owner.username|title}} <br>
+                        Email : {{product.owner.email}} <br>
+                        Product Price : {{product.min_price}} <br>
+                        Bidding Start : {{product.auction_date.auction_date}} At {{product.auction_session.auction_start_time}} <br>
+                        Ending Time : {{product.auction_date.auction_date}} At {{product.auction_session.auction_end_time}} <br>
+                    </p>
+                    {% if user.user_profile.user_type == '1' %}
+                        {% if bidding_check %}
+                            <span class="text-danger font-weight-bold text-center">Already Particpated</span>
+                        {% elif product.auction_date.auction_date >= today %}
+                            {% if product.auction_date.auction_date == today and product.auction_session.auction_end_time < time %}
+                                <a href="{% url 'auction:auction_winner' product.id %}">Bidding Complated Click Here To Show Result</a>
+                            {% else %}
+                                 <a href="{% url 'auction:participate_auction' product.id %}" class="btn btn-primary">Participate</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'auction:auction_winner' product.id %}">Bidding Complated Click Here To Show Result</a>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md 6">
+            <div class="overflow-auto">
+                {% if product.auction_date.auction_date >= today %}
+                    {% if product.auction_date.auction_date == today and product.auction_session.auction_end_time < time %}
+                        <a href="{% url 'auction:auction_winner' product.id %}">Bidding Complated Click Here To Show Result</a>
+                    {% elif product.auction_date.auction_date == today and product.auction_session.auction_start_time > time %}
+                        <h2>Bidding Will Start On {{product.auction_date.auction_date}} At {{product.auction_session.auction_start_time}}</h2>
+                    {% elif product.auction_date.auction_date == today and product.auction_session.auction_end_time >= time and product.auction_session.auction_start_time <= time %}
+                        <h2 class="">Biddign</h2>
+                        <div class="chat">
+                            {% for bidding in all_bidding %}
+
+
+                            <div class="message-candidate center-block">
+                                <div class="row">
+                                    <div class="col-xs-8 col-md-6">
+                                        <img src="{{ bidding.user.email|gravatar_url:150 }}" class="message-photo">
+                                        <h4 class="message-name">{{bidding.user.username}}</h4>
+                                    </div>
+                                    <div class="col-xs-4 col-md-6 text-right message-date">{{bidding.product.auction_date}}</div>
+                                </div>
+                                <div class="row message-text">
+                                    {{bidding.amount}} TK
+                                </div>
+                            </div>
+
+                            {% endfor %}
+                        </div>
+                        <div class="messaging center-block">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form action="{% url 'auction:participate_auction' product.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="amount" id="amount">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit" id="amount_submit">Send</button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% elif product.auction_date.auction_date < today %}
+                    <a href="{% url 'auction:auction_winner' product.id %}">Bidding Complated Click Here To Show Result</a>
+                {% else %}
+                    <a href="{% url 'auction:auction_winner' product.id %}">Bidding Complated Click Here To Show Result</a>
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+{% block script %}
+    <script>
+        jQuery(document).ready(function($) {
+            var product_id = "{{product.id|escapejs}}"
+
+            $('#amount_submit').click(function(){
+                var amount = $.trim($('#amount').val());
+
+                if(amount != ''){
+                    $.post('/auction/particpate/'+product_id, {
+                        amount: amount,
+                        product_id: product_id
+                    }, function(data){
+                        $('#amount').val('');
+                    });
+                }
+            });
+            setInterval(function(){
+                $('.chat').load(location.href + ' .chat');
+            }, 200);
+        });
+    </script>
+{% endblock script %}

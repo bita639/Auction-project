@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>
+    {% block title %}
+        AuctionBd
+    {% endblock title %}
+  </title>
+
+  {% include 'partials/auction/_css.html' %}
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    {% if user.user_profile.user_type == '1' %}
+      {% include 'partials/bidder/_sidebar.html' %}
+    {% elif user.user_profile.user_type == '2' %}
+      {% include 'partials/seller/_sidebar.html' %}
+    {% endif %}
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        {% include 'partials/auction/_topbar.html' %}
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+
+          {% include 'partials/_alert.html' %}
+
+          <!-- Page Heading -->
+          {% include 'partials/auction/_page_title.html' %}
+
+          {% block content %}
+
+          {% endblock content %}
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+        {% include 'partials/auction/_footer.html' %}
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  {% include 'partials/auction/_logout.html' %}
+  {% include 'partials/auction/_js.html' %}
+
+  {% block script %}
+
+  {% endblock script %}
+
+</body>
+
+</html>

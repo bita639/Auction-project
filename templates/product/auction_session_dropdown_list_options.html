@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for session in auction_session %}
+<option value="{{ session.pk }}">{{ session.auction_start_time }}</option>
+{% endfor %}

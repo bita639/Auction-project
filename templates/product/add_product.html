@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{title}}
+{% endblock title %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card">
+                <div class="crad-header">
+                    <h4 class="lead font-weight-bold text-center my-2">{{title}}</h4>
+                </div>
+                <div class="card-body">
+                    <form id="productForm" action="{% url 'auction:add_product' %}" method="POST" novalidate data-sub-cat-url="{% url 'auction:ajax_load_sub_categories' %}" data-auc-session-url="{% url 'auction:ajax_load_auction_session' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{form|crispy}}
+
+                        <input type="submit" value="Save" class="btn btn-primary">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+
+{% block script %}
+    <script>
+    $("#id_category").change(function () {
+
+
+      var url = $("#productForm").attr("data-sub-cat-url");
+      var category_id = $(this).val();
+
+
+
+      $.ajax({
+        url: url,
+        data: {
+          'category': category_id
+        },
+        success: function (data) {
+          $("#id_sub_category").html(data);
+        }
+      });
+
+    });
+
+    $("#id_auction_date").change(function () {
+
+
+      var url = $("#productForm").attr("data-auc-session-url");
+      var auction_date_id = $(this).val();
+
+
+
+      $.ajax({
+        url: url,
+        data: {
+          'auction_date': auction_date_id
+        },
+        success: function (data) {
+          $("#id_auction_session").html(data);
+        }
+      });
+
+    });
+    </script>
+{% endblock script %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load accounts_tags %}
+
+{% block title %}
+    {{title}}
+{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Product Name : {{product_obj.title}}</li>
+                <li class="list-group-item">Product Price : {{product_obj.min_price}}</li>
+                <li class="list-group-item">Owner : {{product_obj.owner.username|title}}</li>
+                <li class="list-group-item">Owner Email : {{product_obj.owner.email}}</li>
+                <li class="list-group-item">Bidding Winner : {{winner.user.username|title}}</li>
+                <li class="list-group-item">Owner Email : {{winner.user.email}}</li>
+                <li class="list-group-item">Wining Price : {{winner.amount}}</li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}
+
+
+
